@@ -16,6 +16,41 @@
 #
 import webapp2
 
+
+def build_page(textarea_content):
+    signup_header = "<h1>Signup</h1>"
+
+    username_label = "<label>Username</label>"
+    username_input = "<input type='text' name='username'/>"
+
+    password_label = "<label>Password</label>"
+    password_input = "<input type='text' name='password'/>"
+
+    verify_password_label = "<label>Verify Password</label>"
+    verify_password_input = "<input type='text' name='verify'/>"
+
+    email_label = "<label>Email (optional)</label>"
+    email_input = "<input type='text' name='email'/>"
+
+    submit = "<input type='submit'/>"
+
+    form = ("<form method='post'>" +
+    username_label + username_input + "<br>" +
+            message_label + textarea + "<br>" +
+            submit + "</form>")
+
+    message_label = "<label>Type a message:</label>"
+    textarea = "<textarea name='message'>" + textarea_content + "</textarea>"
+    submit = "<input type='submit'/>"
+    form = ("<form method='post'>" +
+            rot_label + rotation_input + "<br>" +
+            message_label + textarea + "<br>" +
+            submit + "</form>")
+
+    header = "<h2>Web Caesar</h2>"
+
+    return header + form
+
 class MainHandler(webapp2.RequestHandler):
     def get(self):
 
@@ -33,9 +68,15 @@ class MainHandler(webapp2.RequestHandler):
         email_label = "<label>Email (optional)</label>"
         email_input = "<input type='text' name='email'/>"
 
+        submit = "<input type='submit'/>"
+
+        form = ("<form method='post'>" +
+        username_label + username_input + "<br>" +
+                message_label + textarea + "<br>" +
+                submit + "</form>")
 
 
-        content = signupHeader
+
         self.response.write(content)
 
 app = webapp2.WSGIApplication([
