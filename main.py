@@ -40,7 +40,7 @@ def build_page(textarea_content):
             email_label  + email_input + "<br>" +
             submit + "</form>")
 
-    header = "<h2>Web Caesar</h2>"
+    header = "<h2>Signup</h2>"
 
     return header + form
 
