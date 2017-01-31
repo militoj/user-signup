@@ -17,11 +17,11 @@
 import webapp2
 
 
-def build_page(textarea_content):
+def build_page(username_entered,email_entered):
     header = "<h1>Signup</h1>"
 
     username_label = "<label>Username</label>"
-    username_input = "<input type='text' name='username'/>"
+    username_input = "<input type='text' name='username' value='{0}'/>".format(username_entered)
 
     password_label = "<label>Password</label>"
     password_input = "<input type='text' name='password'/>"
@@ -30,7 +30,7 @@ def build_page(textarea_content):
     verify_password_input = "<input type='text' name='verify'/>"
 
     email_label = "<label>Email (optional)</label>"
-    email_input = "<input type='text' name='email'/>"
+    email_input = "<input type='text' name='email' value='{0}'/>".format(email_entered)
 
     submit = "<input type='submit'/>"
     form = ("<form method='post'>" +
@@ -47,8 +47,15 @@ def build_page(textarea_content):
 class MainHandler(webapp2.RequestHandler):
     def get(self):
 
-        content = build_page("")
+        content = build_page("","")
         self.response.write(content)
+
+    def post(self):
+        username = self.request.get('username')
+        email = self.request.get('email')
+        content = build_page(username,email)
+        self.response.write(content)
+
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler)
