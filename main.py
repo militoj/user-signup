@@ -31,7 +31,7 @@ class MainHandler(webapp2.RequestHandler):
         verify_password_input = "<input type='text' name='verify'/>"
 
         email_label = "<label>Email (optional)</label>"
-        email_input = "<input type='text' name='emaili'/>"
+        email_input = "<input type='text' name='email'/>"
 
 
 
