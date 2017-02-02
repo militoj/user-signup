@@ -15,6 +15,7 @@
 # limitations under the License.
 #
 import webapp2
+import re
 
 
 def build_page(username_entered,email_entered):
@@ -32,17 +33,82 @@ def build_page(username_entered,email_entered):
     email_label = "<label>Email (optional)</label>"
     email_input = "<input type='text' name='email' value='{0}'/>".format(email_entered)
 
+    username_error = self.request.get("username_error")
+    password_error = self.request.get("password_error")
+    verify_error = self.request.get("verify_error")
+    email_error = self.request.get("email_error")
+
+    if username_error:
+        username_error_element = (
+            "<p class='error'>" +
+            cgi.escape(username_error, quote=True) +
+            "</p>"
+        )
+    else:
+        username_error_element  = ""
+
+    if password_error:
+        password_error_element = (
+            "<p class='error'>" +
+            cgi.escape(password_error, quote=True) +
+            "</p>"
+        )
+    else:
+        password_error_element  = ""
+
+    if verify_error:
+        verify_error_element = (
+            "<p class='error'>" +
+            cgi.escape(verify_error, quote=True) +
+            "</p>"
+        )
+    else:
+        verify_error_element = ""
+
+    if email_error:
+        email_error_element = (
+            "<p class='error'>" +
+            cgi.escape(email_error, quote=True) +
+            "</p>"
+        )
+    else:
+        email_error_element  = ""
+
+
     submit = "<input type='submit'/>"
     form = ("<form method='post'>" +
-            username_label  + username_input + "<br>" +
-            password_label + password_input + "<br>" +
-            verify_password_label + verify_password_input + "<br>" +
-            email_label  + email_input + "<br>" +
+            username_label  + username_input + username_error_element +"<br>" +
+            password_label + password_input + password_error_element +"<br>" +
+            verify_password_label + verify_password_input + verify_error_element +"<br>" +
+            email_label  + email_input + email_error_element +"<br>" +
             submit + "</form>")
 
     header = "<h2>Signup</h2>"
 
     return header + form
+
+
+# Validating against regular expressions
+
+def username_check(username):
+    USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
+    return USER_RE.match(username)
+
+def password_check(username):
+    USER_RE = re.compile(r"^.{3,20}$")
+    return USER_RE.match(username)
+
+def verify_check(password, verify):
+    if password == verify:
+        return True
+    else:
+        return False
+
+def email_check(username):
+    USER_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
+    return USER_RE.match(username)
+
+
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
@@ -53,8 +119,39 @@ class MainHandler(webapp2.RequestHandler):
     def post(self):
         username = self.request.get('username')
         email = self.request.get('email')
+        password = self.request.get('username')
+        verify = self.request.get('email')
+
+
+        username_pass = False
+        password_pass = False
+        verify_pass = False
+        email_pass = False
+
+        if username_check(username):
+            username_pass = True
+        else:
+            error = "Please enter a valid username"
+
+            # redirect to homepage, and include error as a query parameter in the URL
+            self.redirect("/?error=" + error)
+
+        if password_check(password):
+            password_pass = True
+
+        if verify_check(password,verify):
+            verify_pass = True
+
+        if email_check(email):
+            email_pass = True
+
+
+
         content = build_page(username,email)
         self.response.write(content)
+
+
+
 
 
 app = webapp2.WSGIApplication([
