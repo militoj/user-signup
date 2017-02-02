@@ -122,41 +122,41 @@ class MainHandler(webapp2.RequestHandler):
 
 
 
-        # if username_error:
-        #     username_error_element = (
-        #         "<p class='error'>" +
-        #         cgi.escape(username_error, quote=True) +
-        #         "</p>"
-        #     )
-        # else:
-        #     username_error_element  = " "
-        #
-        # if password_error:
-        #     password_error_element = (
-        #         "<p class='error'>" +
-        #         cgi.escape(password_error, quote=True) +
-        #         "</p>"
-        #     )
-        # else:
-        #     password_error_element  = " "
-        #
-        # if verify_error:
-        #     verify_error_element = (
-        #         "<p class='error'>" +
-        #         cgi.escape(verify_error, quote=True) +
-        #         "</p>"
-        #     )
-        # else:
-        #     verify_error_element = " "
-        #
-        # if email_error:
-        #     email_error_element = (
-        #         "<p class='error'>" +
-        #         cgi.escape(email_error, quote=True) +
-        #         "</p>"
-        #     )
-        # else:
-        #     email_error_element  = " "
+        if username_error:
+            username_error_element = (
+                "<p class='error'>" +
+                cgi.escape(username_error, quote=True) +
+                "</p>"
+            )
+        else:
+            username_error_element  = " "
+
+        if password_error:
+            password_error_element = (
+                "<p class='error'>" +
+                cgi.escape(password_error, quote=True) +
+                "</p>"
+            )
+        else:
+            password_error_element  = " "
+
+        if verify_error:
+            verify_error_element = (
+                "<p class='error'>" +
+                cgi.escape(verify_error, quote=True) +
+                "</p>"
+            )
+        else:
+            verify_error_element = " "
+
+        if email_error:
+            email_error_element = (
+                "<p class='error'>" +
+                cgi.escape(email_error, quote=True) +
+                "</p>"
+            )
+        else:
+            email_error_element  = " "
 
         content = build_page(username,email,username_error_element,password_error_element,verify_error_element,email_error_element)
         self.response.write(content)
