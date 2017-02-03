@@ -16,6 +16,7 @@
 #
 import webapp2
 import re
+import cgi
 
 
 def build_page(username_entered,email_entered,username_error_element,password_error_element,verify_error_element,email_error_element):
@@ -25,10 +26,10 @@ def build_page(username_entered,email_entered,username_error_element,password_er
     username_input = "<input type='text' name='username' value='{0}'/>".format(username_entered)
 
     password_label = "<label>Password</label>"
-    password_input = "<input type='text' name='password'/>"
+    password_input = "<input type='password' name='password'/>"
 
     verify_password_label = "<label>Verify Password</label>"
-    verify_password_input = "<input type='text' name='verify'/>"
+    verify_password_input = "<input type='password' name='verify'/>"
 
     email_label = "<label>Email (optional)</label>"
     email_input = "<input type='text' name='email' value='{0}'/>".format(email_entered)
@@ -44,7 +45,13 @@ def build_page(username_entered,email_entered,username_error_element,password_er
             email_label  + email_input + email_error_element +"<br>" +
             submit + "</form>")
 
-    header = "<h2>Signup</h2>"
+    header = """<h2>Signup</h2>
+            <style type="text/css">
+                .error {
+                    color: red;
+                }
+            </style>
+    """
 
     return header + form
 
@@ -61,27 +68,32 @@ def password_check(username):
 
 def verify_check(password, verify):
     if password == verify:
+        if password == '':
+            return False
         return True
     else:
         return False
 
 def email_check(username):
-    USER_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
-    return USER_RE.match(username)
+    if username == "":
+        return True
+    else:
+        USER_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
+        return USER_RE.match(username)
 
 
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
 
-        content = build_page("","")
+        content = build_page("","","","","","")
         self.response.write(content)
 
     def post(self):
         username = self.request.get('username')
         email = self.request.get('email')
-        password = self.request.get('username')
-        verify = self.request.get('email')
+        password = self.request.get('password')
+        verify = self.request.get('verify')
 
 
         username_pass = False
@@ -95,10 +107,10 @@ class MainHandler(webapp2.RequestHandler):
         verify_error = ''
         email_error = ''
 
-        username_error_element = 'BLAH '
-        password_error_element = 'BLAH '
-        verify_error_element = 'BLAH '
-        email_error_element = 'BLAH '
+        username_error_element = ''
+        password_error_element = ''
+        verify_error_element = ''
+        email_error_element = ''
 
         if username_check(username):
             username_pass = True
@@ -124,47 +136,64 @@ class MainHandler(webapp2.RequestHandler):
 
         if username_error:
             username_error_element = (
-                "<p class='error'>" +
+                "<span class='error'>" +
                 cgi.escape(username_error, quote=True) +
-                "</p>"
+                "</span>"
             )
         else:
             username_error_element  = " "
 
         if password_error:
             password_error_element = (
-                "<p class='error'>" +
+                "<span class='error'>" +
                 cgi.escape(password_error, quote=True) +
-                "</p>"
+                "</span>"
             )
         else:
             password_error_element  = " "
 
         if verify_error:
             verify_error_element = (
-                "<p class='error'>" +
+                "<span class='error'>" +
                 cgi.escape(verify_error, quote=True) +
-                "</p>"
+                "</span>"
             )
         else:
             verify_error_element = " "
 
         if email_error:
             email_error_element = (
-                "<p class='error'>" +
+                "<span class='error'>" +
                 cgi.escape(email_error, quote=True) +
-                "</p>"
+                "</span>"
             )
         else:
             email_error_element  = " "
 
-        content = build_page(username,email,username_error_element,password_error_element,verify_error_element,email_error_element)
+        if username_pass and password_pass and verify_pass and email_pass:
+            self.redirect("/welcome?username=" + username)
+        else:
+            content = build_page(username,email,username_error_element,password_error_element,verify_error_element,email_error_element)
+            self.response.write(content)
+
+class Welcome(webapp2.RequestHandler):
+    """ Handles requests coming in to '/add'
+        e.g. www.flicklist.com/add
+    """
+
+    def get(self):
+        # look inside the request to figure out what the user typed
+        username = self.request.get('username')
+
+
+        sentence = "Welcome " + username + "!"
+        content = "<p>" + sentence + "</p>"
         self.response.write(content)
 
 
 
 
-
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/', MainHandler),
+    ('/welcome', Welcome)
 ], debug=True)
